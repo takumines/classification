@@ -8,15 +8,20 @@ defmodule Classification.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start the Telemetry supervisor
       ClassificationWeb.Telemetry,
-      {DNSCluster, query: Application.get_env(:classification, :dns_cluster_query) || :ignore},
+      # Start the PubSub system
       {Phoenix.PubSub, name: Classification.PubSub},
-      # Start the Finch HTTP client for sending emails
+      # Start Finch
       {Finch, name: Classification.Finch},
+      # Start the Endpoint (http/https)
+      ClassificationWeb.Endpoint,
       # Start a worker by calling: Classification.Worker.start_link(arg)
-      # {Classification.Worker, arg},
-      # Start to serve requests, typically the last entry
-      ClassificationWeb.Endpoint
+      # {Classification.Worker, arg}
+      {Nx.Serving,
+       serving: Classification.ResNet.build_model(),
+       name: Classification.Serving,
+       batch_timeout: 100}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

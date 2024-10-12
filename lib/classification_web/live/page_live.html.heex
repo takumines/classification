@@ -1,4 +1,46 @@
 <div class="flex h-screen">
-  <div>Actions</div>
-  <div class="w-[32em] h-1/2 mx-auto p-4 border-2 rounded-lg shadow-xl"></div>
+  <div>
+    Actions
+    <div class="flex flex-col gap-2">
+      <button
+        class="rounded-lg bg-blue-500 px-5 py-2.5 text-center text-white"
+        phx-click="predict"
+      >
+        Predict
+      </button>
+      <button
+        class="rounded-lg border bg-white px-5 py-2.5 text-center text-gray-700"
+        phx-click="clear"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+  <div class={
+      "w-[32em] h-1/2 mx-auto p-4 border-2 rounded-lg shadow-xl"
+      <> if is_nil(@upload_file), do: "", else: " hidden"
+  }>
+    <form id="upload-form" class="h-full" phx-change="upload">
+      <div phx-drop-target={@uploads.image.ref} class="h-full">
+        <label>
+          <.live_file_input class="opacity-0 h-1/2" upload={@uploads.image} />
+          <h1 class="-mt-6 text-center text-4xl">
+            Select or Drop File
+          </h1>
+        </label>
+      </div>
+    </form>
+  </div>
+  <%= if @upload_file do %>
+    <figure>
+      <img
+        alt=""
+        class="w-full ml-4"
+        src={"data:image/png;base64,#{Base.encode64(@upload_file)}"}
+      />
+      <figcaption><%= @filename %></figcaption>
+      <h1><%= "Anser:#{@ans}" %></h1>
+      <h1><%= "Score: #{@score}" %></h1>
+    </figure>
+  <% end %>
 </div>
